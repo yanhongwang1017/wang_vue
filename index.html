@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./node_modules/vue/dist/vue.js"></script>
+</head>
+<style>
+    .menu{width: 200px;padding:0;background: #393D49;color: #fff;border-radius: 2px;font-size:18px;}
+    .menu li{width: 100%;height: 45px;line-height: 45px;text-align: center;color:#fff;}
+    ul,li,dl,dt{list-style: none;margin: 0;padding: 0;}
+    #menu_title{position: relative;cursor: pointer;background: rgba(105, 110, 138, 0.35);}
+    #menu_title p{margin: 0;-webkit-margin-before: 0;-webkit-margin-after: 0;}
+    .sanjiao{width: 0;height: 0;border-top: 8px solid #fff;border-left:8px solid transparent;border-right:8px solid transparent;
+        border-bottom:8px solid transparent;position: absolute;top:20px;right: 20px;transition: 0.6s;}
+    .fanzhuan{border-top: 8px solid transparent;border-left:8px solid transparent;border-right:8px solid transparent;
+        border-bottom:8px solid #fff;top:10px;}
+    ul>dl{width: 100%;text-align: center;color:#fff;cursor: pointer;}
+    ul>dl>dt{width: 100%;height: 45px;line-height: 45px;border-bottom: 1px solid #9f9f9f;}
+    .none{display: none;}
+</style>
+<body>
+    <div id="root">
+        <menus title_name="1234" :list="list1"></menus>
+        <menus title_name="abcd" :list="list2"></menus>
+    </div>
+    <script>
+        Vue.component("menus",{
+            props:["title_name","list"],
+            template:'<ul class="menu"><li id="menu_title" @click="fanzhuan()"><p>{{this.title_name}}</p><div class="sanjiao" :class="{fanzhuan:fanzhuans}" ></div></li><dl :class="{none:fanzhuans}"><dt v-for="item in list">{{item}}</dt></dl></ul>',
+            data:function () {
+                return{
+                    fanzhuans:false
+                }
+            },
+            methods:{
+                fanzhuan(){
+                    if (!this.fanzhuans){
+                        this.fanzhuans = true;
+                    }else{
+                        this.fanzhuans = false;
+                    }
+                }
+            }
+        });
+        new Vue({
+            el:"#root",
+            data:{
+                list1:[1,2,3,4,5],
+                list2:["a","b","c","d"]
+            }
+        })
+    </script>
+</body>
+</html>

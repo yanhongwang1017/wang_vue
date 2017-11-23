@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./node_modules/vue/dist/vue.js"></script>
+</head>
+<style>
+    .button{
+        padding: 10px 16px;border:1px solid #606060;display: inline-block;border-radius: 6px;cursor: pointer;
+    }
+    .red{
+        background: red;
+    }
+</style>
+<body>
+<div id="vue">
+    <!--<div class="button">按钮</div>-->
+    <btn names="按钮"></btn>
+    <btn names="上传"></btn>
+    <btn names="下载"></btn>
+    <btn names="哈哈"></btn>
+</div>
+<script>
+    Vue.component("btn",{
+        props:["names"],
+        template:"<div class='button' @click='back()' :class='{red:red}'>{{this.names}}</div>",
+        data:function () {
+            return {
+                red:false
+            }
+        },
+        methods:{
+            back(){
+                this.red = true;
+            }
+        }
+    })
+
+    new Vue({
+        el:"#vue"
+    })
+</script>
+</body>
+</html>

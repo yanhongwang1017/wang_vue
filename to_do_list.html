@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./node_modules/vue/dist/vue.js"></script>
+</head>
+<style>
+    .bigBox{  width: 60%;height: auto;margin: 20px auto 0;}
+    h1{text-align: center;font-size: 26px;font-weight: 400;margin-bottom: 20px;}
+    .shuruk{width: 100%;margin: 0 auto 30px;}
+    .shuruk input{width: 100%;border:1px solid #00a1f4;height: 40px;font-size: 16px;padding-left: 10px;border-radius:4px;outline: none;}
+    .list_box{width: 100%;height: auto;}
+    .list{width: 100%;height: 30px;line-height: 30px;border-bottom: 1px solid #0C0C0C;margin-bottom: 10px;position: relative;}
+    .btn{margin-bottom: 20px;}.btn button{margin-left: 20px;cursor: pointer;}
+    .list span{display: inline-block;}.red{background: red;}
+    .list .opt{width: 8px;height: 8px;border-radius: 50%;border:1px solid #000;margin-right: 10px;cursor: pointer;}
+    .list .del{float: right;cursor: pointer;}
+    .list .con{position: absolute;left: 20px;top:0;width: 60%;height: 100%;}
+    .list .hid_box{position: absolute;left: 20px;top:0;width: 60%;height: 100%;}
+</style>
+<body>
+    <div id="vue">
+        <div class="bigBox">
+            <h1>添加待办事项</h1>
+            <div class="shuruk">
+                <input type="text" placeholder="添加待办事项" v-model="text" @keydown.13="add()" v-focus="true">
+            </div>
+            <div class="btn">
+                <button @click="change('all')">全部</button>
+                <button @click="change(1)">已完成</button>
+                <button @click="change(0)">未完成</button>
+            </div>
+            <div class="list_box">
+                <div class="list" v-show="all.length > 0" v-for="item in datas">
+                    <div v-if="item.edit" @dblclick="changeEdit(item)">
+                        <span class="opt" @click="changeState(item,item.state)" :class={red:item.state==1}></span>
+                        <span class="con" v-if="edit">{{item.con}}</span>
+                        <span class="del" @click="del(item.id)">删除</span>
+                    </div>
+                    <div class="hid_box" v-else>
+                        <input type="text" v-model="item.con" @blur="changeEdit(item)">
+                    </div>
+                </div>
+                <div class="list" v-show="all.length == 0">没有数据</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        Vue.directive("focus",{
+            inserted:function (el,val) {
+                if (val){
+                    el.focus();
+                }
+            }
+        })
+        new Vue({
+            el:"#vue",
+            data:{
+                all:localStorage.data?JSON.parse(localStorage.data):[],
+                text:"",
+                status:"all",
+                edit:true
+            },
+            methods:{
+                add(){
+                    var obj = {};
+                    obj.id = 1000*Math.random() + new Date().getTime();
+                    obj.con = this.text;
+                    obj.state = 0;
+                    obj.edit = true,
+                    this.all.push(obj);
+                    localStorage.data = JSON.stringify(this.all);
+                    this.text = "";
+                },
+                changeState(item,state){
+                    if(state == 0){
+                        item.state = 1;
+                    }else {
+                        item.state = 0;
+                    }
+                    localStorage.data = JSON.stringify(this.all);
+                },
+                del(id){
+                    this.all = this.all.filter(function (a) {
+                        return a.id != id;
+                    });
+                    localStorage.data = JSON.stringify(this.all);
+                },
+                change(str){
+                    this.status = str;
+                },
+                changeEdit(item){
+                    item.edit = !item.edit;
+                    localStorage.data = JSON.stringify(this.all);
+                }
+            },
+            computed:{
+                datas(){
+                    var that = this;
+                    return this.all.filter(function (obj) {
+                        if (that.status == "all"){
+                            return obj;
+                        }else {
+                            if(obj.state == that.status){
+                                return obj;
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+</html>
